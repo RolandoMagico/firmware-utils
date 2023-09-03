@@ -543,7 +543,7 @@ static int UpdateHeaderInRecoveryImage(FILE* file, struct stat* fileStatus, cons
       if (partitionLengthOld != partitionLength)
       {
         printf("Updating data length in partition %i from %li (0x%08lX) to %li (0x%08lX)\n", 
-        partition, partitionLengthOld, partitionLength, partitionLengthOld, partitionLength);
+        partition, partitionLengthOld, partitionLengthOld, partitionLength, partitionLength);
         partitionData[M32_FIRMWARE_UTIL_FW_DATA_LENGTH_OFFSET] = partitionLength & 0xFFu;
         partitionData[M32_FIRMWARE_UTIL_FW_DATA_LENGTH_OFFSET + 1] = (partitionLength >> 8) & 0xFFu; 
         partitionData[M32_FIRMWARE_UTIL_FW_DATA_LENGTH_OFFSET + 2] = (partitionLength >> 16) & 0xFFu;
