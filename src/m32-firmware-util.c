@@ -86,6 +86,7 @@ A header of the decrypted firmware image parition has the following layout:
  Includes
 ***************************************************************************************************/
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -237,6 +238,7 @@ static int ConvertAsciiIvToHexArray(const uint8_t ivAscii[AES_BLOCK_SIZE * 2], u
 static int CreateAes128CbcEncryptionHeader(uint8_t* buffer, size_t imageSize);
 static int CreateSha512VerificatioinHeader(uint8_t* buffer, size_t imageSize);
 static int WriteBufferToFile(const uint8_t* buffer, const size_t bufferSize, const char* outputFile);
+static int WriteDebugBufferToFile(const uint8_t* buffer, const size_t bufferSize, const char* outputFile);
 static int WriteAes128CbcIvToBuffer(uint8_t* buffer, const uint8_t* iv, const size_t ivLength);
 static void PrintUsage(char* programName);
 static void PrintOpenSSLError(const char* api);
@@ -346,13 +348,20 @@ const int M32FirmwareUtilDeviceInfosLength =
  * Note: The trailing \0 is not present in the firmware data.
 */
 const char* M32FirmwareUtilHeaderStart = "MH01";
+
+/***************************************************************************************************
+ Variables
+***************************************************************************************************/
+static bool M32FirmwareUtilWriteDebugFiles = false;
+
+static char* M32FirmwareUtilDebugTargetFolder = NULL;
 /***************************************************************************************************
  Implementation
 ***************************************************************************************************/
 int main(int argc, char *argv[]) 
 {
   int status = 1;
-  if (argc != 5)
+  if ((argc != 5) && (argc != 7))
   {
     PrintUsage(argv[0]);
   }
@@ -379,6 +388,12 @@ int main(int argc, char *argv[])
       {
         device = &(M32FirmwareUtilDeviceInfos[i]);
       }
+    }
+
+    if ((argc > 6) && (strcmp("--debug", argv[5])== 0))
+    {
+      M32FirmwareUtilWriteDebugFiles = true;
+      M32FirmwareUtilDebugTargetFolder = argv[6];
     }
 
     if ((entry == NULL) || (device == NULL))
@@ -427,7 +442,7 @@ int main(int argc, char *argv[])
 
 static void PrintUsage(char* programName)
 {
-  printf("Usage: %s <Device> <Operation> <InputFile> <OutputFile>\n", programName);
+  printf("Usage: %s <Device> <Operation> <InputFile> <OutputFile> [--debug] <Directory>\n", programName);
   
   printf("\n<Device> can be one of the following:\n");
   for (int i = 0; i < M32FirmwareUtilDeviceInfosLength; i++)
@@ -440,6 +455,9 @@ static void PrintUsage(char* programName)
   {
     printf("%s: %s\n",M32FirmwareUtilOperations[i].Argument, M32FirmwareUtilOperations[i].Description);
   }
+
+  printf("\nThe argument \"--debug\" is optional.\n");
+  printf("If present, debug files will be written to the directory specified by <Directory>\n");
 }
 
 /// @brief
@@ -623,7 +641,6 @@ static int CreateFactoryImageFromRecoveryImage(FILE* file, struct stat* fileStat
     uint8_t* recoveryImageWithHeader = &(ecnryptionInfo[M32_FIRMWARE_DECRYPTION_INFO_LENGTH]);
     uint8_t* recoveryImage = &(recoveryImageWithHeader[M32_FIRMWARE_HEADER_LENGTH]);
     uint8_t* recoveryImageSignature = &(recoveryImage[recoveryImageSize]);
-    uint8_t* factoryImageSignature = &(recoveryImageSignature[M32_FIRMWARE_SIGNATURE_LENGTH]);
   
     if (fread(recoveryImage, 1, fileStatus->st_size, file) != fileStatus->st_size)
     {
@@ -637,16 +654,14 @@ static int CreateFactoryImageFromRecoveryImage(FILE* file, struct stat* fileStat
     {
       printf("Unable to create SHA512 verification signature for recovery image\n");
     }
-#ifdef M32_FIMRWARE_UTIL_ENABLE_DEBUG_FILES
-    else if (WriteBufferToFile(recoveryImageSignature, M32_FIRMWARE_SIGNATURE_LENGTH, "Sig1.bin") != 0)
+    else if (WriteDebugBufferToFile(recoveryImageSignature, M32_FIRMWARE_SIGNATURE_LENGTH, "Sig1.bin") != 0)
     {
       printf("Error during writing debug output file %s\n", "Sig1.bin");
     }
-    else if (WriteBufferToFile(recoveryImageWithHeader, recoveryImageSize + M32_FIRMWARE_HEADER_LENGTH + M32_FIRMWARE_SIGNATURE_LENGTH, "FW_and_Sig1.bin") != 0)
+    else if (WriteDebugBufferToFile(recoveryImageWithHeader, recoveryImageSize + M32_FIRMWARE_HEADER_LENGTH + M32_FIRMWARE_SIGNATURE_LENGTH, "FW_and_Sig1.bin") != 0)
     {
       printf("Error during writing debug output file %s\n", "FW_and_Sig1.bin");
     }
-#endif
     else if (EncryptAes128Cbc(recoveryImageWithHeader, 
                               encryptedImageWithoutHeaderSize, 
                               recoveryImageWithHeader,
@@ -657,19 +672,21 @@ static int CreateFactoryImageFromRecoveryImage(FILE* file, struct stat* fileStat
     {
       printf("Unable to encrypt image\n");
     }
-#ifdef M32_FIMRWARE_UTIL_ENABLE_DEBUG_FILES
-    else if (WriteBufferToFile(saltHeader, encryptedDataLength + M32_FIRMWARE_SALT_INFO_LENGTH, "FWenc.bin") != 0)
+    else if (WriteDebugBufferToFile(saltHeader, encryptedDataLength + M32_FIRMWARE_SALT_INFO_LENGTH, "FWenc.bin") != 0)
     {
       printf("Error during writing debug output file %s\n", "FWenc.bin");
     }
-#endif
     else if (CreateAes128CbcEncryptionHeader(encryptionHeader, encryptedDataLength + M32_FIRMWARE_SALT_INFO_LENGTH) != 0)
     {
       printf("Unable to create AES128 CBC header\n");
     }
     else if (WriteAes128CbcIvToBuffer(ecnryptionInfo, IV, sizeof(IV)) != 0)
     {
-      printf("Unable to create AES128 CBC header\n");
+      printf("Unable to write AES128 CBD IV\n");
+    }
+    else if (WriteDebugBufferToFile(ecnryptionInfo, M32_FIRMWARE_INITIALIZATION_VECTOR_LENGTH, "IV.bin") != 0)
+    {
+      printf("Error during writing debug output file %s\n", "FWenc.bin");
     }
     else if (CreateSha512VerificatioinHeader(factoryImageHeader, encryptedDataLength + M32_FIRMWARE_DECRYPTION_INFO_LENGTH + M32_FIRMWARE_HEADER_LENGTH) != 0)
     {
@@ -1254,13 +1271,23 @@ static int ConvertAsciiIvToHexArray(const uint8_t ivAscii[AES_BLOCK_SIZE * 2], u
   return 0;
 }
 
+/// @brief
+///   Writes data from a buffer to a file.
+/// @param buffer
+///   The buffer containing the data.
+/// @param bufferSize
+///   The lengths of the buffer.
+/// @param outputFile
+///   The path to the file to which the data will be written.
+/// @return
+///   The function returns 0 if writing was successful; otherwise 1.
 static int WriteBufferToFile(const uint8_t* buffer, const size_t bufferSize, const char* outputFile)
 {
   int status = 1;
   FILE* file = NULL;
   if ((file = fopen(outputFile, "wb")) == NULL)
   {
-     printf("Unable to open file %s for writing\n", outputFile);
+    printf("Unable to open file %s for writing\n", outputFile);
   }
   else if (fwrite(buffer, 1, bufferSize, file) != bufferSize)
   {
@@ -1276,7 +1303,43 @@ static int WriteBufferToFile(const uint8_t* buffer, const size_t bufferSize, con
     fclose(file);
     file = NULL;
   }
-  
+
+  return status;
+}
+
+/// @brief
+///   Writes data from a buffer to a file if debug output is enabled.
+/// @param buffer
+///   The buffer containing the data.
+/// @param bufferSize
+///   The lengths of the buffer.
+/// @param outputFile
+///   The path to the file to which the data will be written.
+/// @return
+///   The function returns 0 if writing was successful; otherwise 1.
+static int WriteDebugBufferToFile(const uint8_t* buffer, const size_t bufferSize, const char* outputFile)
+{
+  int status = 1;
+  if (M32FirmwareUtilWriteDebugFiles == true)
+  {
+    const char* pathSeparator = "/";
+    const size_t outputFilePathLength = strlen(M32FirmwareUtilDebugTargetFolder) + strlen(pathSeparator) + strlen(outputFile) + 1;
+    char* outputFilePath = malloc(outputFilePathLength);
+    snprintf(outputFilePath, outputFilePathLength, "%s%s%s", M32FirmwareUtilDebugTargetFolder, pathSeparator, outputFile);
+    
+    status = WriteBufferToFile(buffer, bufferSize, outputFilePath);
+
+    if (outputFilePath != NULL)
+    {
+      free(outputFilePath);
+      outputFilePath = NULL;
+    }
+  }
+  else
+  {
+    status = 0;
+  }
+
   return status;
 }
 
