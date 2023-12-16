@@ -273,6 +273,51 @@ const M32FirmwareUtilOperationsType M32FirmwareUtilOperations[] =
 const int M32FirmwareUtilOperationsLength = 
   sizeof(M32FirmwareUtilOperations) / sizeof(M32FirmwareUtilOperationsType);
 
+const char M30PrivateKey[] = R"(
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-256-CBC,8A0BF905B77DC148004E713C828DC660
+
+iFD5lI2LhcgxPVAuBU5E/PMABnLNTzasvFfonExni1D2NdTxATjiA88Urk0+cSiw
+Tb6Z9a8ODVw6jX2NiH5rm7TzSDUoaF9y/d+67EKMpyz/+vYgl9ZtHwesi5L5Hn+0
+0ukeL1IgTlZX3SzbFAyRHDOmt/AJBc1lhrB4wSIJkMggZxF3s+EHLjf5I0Mo6rvQ
+sFyYJ28gy5CFvwN+xIcy3DRASdKjl0PIRCUPaJYdRkF0TjiyVMvy17tiI/ZAuMdJ
+5FwzPg7VksHFJ08Vvd96/1IW+Z5f3RIya00q+4+eH6G4ksmZiWvd0Gyy9U8yt/TW
+yb7h7LxGvaeGhPeEIdjQp90dMBDo+JdsVXbDIhI83z6NR0W+QV3db1lIUXapV1a0
+NH6KgFe40/Z/foSqX6G0stbnmVZHEEtKqDEilFNImORJQDJyeC/OvKqWx+yF9Xh4
+ML/WHMBW1XJQBnJgng/Y690H2JUa6M/d6ovyxZV50ANMFlurGJMXCVV8Li2kC87C
+C/2Kcajl2xEi4J0zRgqblZ6C5IRaSuaYPSdSjVXScz/qRG2CE5uAEXfhMy9cBU5E
+xeCdBSHktTTB3FYvUGFEz3oKzakLwi1iUKMM7uQhgehP+DV/TD1bMm3WT25rNXi8
+m+Vq9Ieu+ObqTqGX/FSa3QxQx8WbO0YGW0l/46JzbusiP+mGxZH94r+CtB+3TflS
+9xrXx+uV6UKNHWFIaKAlVYTCou6SUYGENGSTOEN2v/oPUfN2gUuh31p9muJXpA6t
+Wd8oEcOCMk9FSN12TQ/3HK2tXB/DoRQRwDu837Bk4Fh0lQQy9DjBo9kPC5ZTlXN4
+6MB+E3P72MuSsLOCAkcD0kJ6Uug1bM8rNqkEevsi7UPyNtilharewhHImG1oou2q
+OwdeweLZlDE/nXb+gmTkhzOa0zDtZck4TBotwxCmvBU+CEXvLpAeqyaHAP4NKYMc
+QGDqYMAVyxH2hNtXXSkpDy6ojSTCAamZBtS/3tE1C7YkSWHedeoPmkUMxvgcAwH/
+E4piO5KJ7PtYEkFbZ5Fo63cHvnVndW1F0/INn3GsmiNerSa75u2VUWOZ0m0fg2nR
+L18hu9CsxcBB9wIPEEVVkGmvGIZgYZz9IuntLmO5Njr1k8PBoTyLmM55NRS3yXvA
+/MleG6nkUdZ+pemhhUnoST5JIf8qEZuwpZ1bvx095ZJsDxIUbQqBBW+cKgIi2SCW
+OP8qltuE0hfG/inOerWN9GDrXwb9C3/hTkyb+yecCAQGbu5fkHYGnniVUFgUu7dd
+Kv/Aorn3I6HMFBk2+XoH5BMS+It17wORVMOfXHdmyem0w6SjLdciuoE869mvkk22
+uNvC9GS+puyqxae1SMorH5DOBLCmxgYrfu/+WOfjktxLOYmvguQUzJ2MfuejHejd
+XPDLYXZnqBxDq4jFkuz/lBy+niq/m2jqlVLhTxKU98CkeYhhdoDPRqolZu15lULQ
+ghDShGIkpLoRJD42+6Ddhm0i7TmubNPtB/AwOie2tkyYNf+vkZZLL0UyHXhJJTeb
+UA5Bcn8QXE1gzoqLedid5TKFUss3hUrqwmp7sbhycRUdOZaty9LwS71Ogh0YQ048
+-----END RSA PRIVATE KEY-----
+)";
+
+const char M30PublicKey[] = R"(
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvIj1OH7L1Wza1aa+ZJl1
+Tb2+6jFxTC4fQhWF+tuHngbAD2YEJVVliQZ27biYR+AOOyKKrp3X6yEZQ28iwio2
+qmvgCrs+UMftKZkozbD+A8JKmrEx2RRloIpFWHEQCgw1JWkWngC2vguoSbP8rtlB
+Qeuevp+oa0fewZd4iPG37b8+dvRucaDyDJgrXXosCTKQVeuGdqF/l6jIDEzLX9c5
+A2k2zBwhTzRUbwrhMF8FPhv8pxN3+YXx75vfYZnw3/dasu6RT2NyWVKlRt86HbfF
+LvNSHDaUNDa5gjmZ4NTm0uR39X15fO+vAsqQBRnURN1uaJzJRQWazMlKtHR5WfHO
+2QIDAQAB
+-----END PUBLIC KEY-----
+)";
+
 const char M32PrivateKey[] = R"(
 -----BEGIN RSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
@@ -320,6 +365,15 @@ JwIDAQAB
 
 const M32FirmwareUtilDeviceInfoType M32FirmwareUtilDeviceInfos[] = 
 {
+  {
+    "M30",
+    "D-Link AQUILA PRO AI AX3000 Smart Mesh Router",
+    "DLK6E6010001",
+    "b4517d9b98e04d9f075f5e78c743e097",
+    M30PrivateKey,
+    M30PublicKey,
+    "wrpd"
+  },
   {
     "M32",
     "D-Link EAGLE PRO AI AX3200 Mesh-System",
