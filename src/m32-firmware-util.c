@@ -368,7 +368,7 @@ const M32FirmwareUtilDeviceInfoType M32FirmwareUtilDeviceInfos[] =
   {
     "M30",
     "D-Link AQUILA PRO AI AX3000 Smart Mesh Router",
-    "DLK6E6010001",
+    "DLK6E6110001",
     "b4517d9b98e04d9f075f5e78c743e097",
     M30PrivateKey,
     M30PublicKey,
