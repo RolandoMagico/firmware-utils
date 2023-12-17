@@ -1219,6 +1219,7 @@ static struct device_info boards[] = {
 		.support_list =
 			"SupportList:\r\n"
 			"{product_name:Archer A6,product_ver:2.0.0,special_id:45550000}\r\n"
+			"{product_name:Archer A6,product_ver:2.0.0,special_id:52550000}\r\n"
 			"{product_name:Archer C6,product_ver:2.0.0,special_id:45550000}\r\n"
 			"{product_name:Archer C6,product_ver:2.0.0,special_id:52550000}\r\n"
 			"{product_name:Archer C6,product_ver:2.0.0,special_id:4A500000}\r\n",
@@ -2159,7 +2160,7 @@ static struct device_info boards[] = {
 	{
 		.id = "EAP615-WALL-V1",
 		.soft_ver = SOFT_VER_DEFAULT,
-		.soft_ver_compat_level = 1,
+		.soft_ver_compat_level = 2,
 		.support_list =
 			"SupportList:\r\n"
 			"EAP615-Wall(TP-Link|UN|AX1800-D):1.0\r\n"
@@ -2426,7 +2427,9 @@ static struct device_info boards[] = {
 			"{product_name:TL-WPA8631P,product_ver:3.0.0,special_id:41550000}\n"
 			"{product_name:TL-WPA8631P,product_ver:3.0.0,special_id:45550000}\n"
 			"{product_name:TL-WPA8631P,product_ver:3.0.0,special_id:55530000}\n"
+			"{product_name:TL-WPA8631P,product_ver:4.0.0,special_id:41550000}\n"
 			"{product_name:TL-WPA8631P,product_ver:4.0.0,special_id:45550000}\n"
+			"{product_name:TL-WPA8631P,product_ver:4.0.0,special_id:55530000}\n"
 			"{product_name:TL-WPA8635P,product_ver:3.0.0,special_id:46520000}\n",
 		.part_trail = 0x00,
 		.soft_ver = SOFT_VER_DEFAULT,
