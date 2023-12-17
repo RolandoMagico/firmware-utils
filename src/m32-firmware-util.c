@@ -363,6 +363,51 @@ JwIDAQAB
 -----END PUBLIC KEY-----
 )";
 
+const char M60PrivateKey[] = R"(
+-----BEGIN RSA PRIVATE KEY-----
+Proc-Type: 4,ENCRYPTED
+DEK-Info: AES-256-CBC,43936836BBBCB8B6BE9CBE8248796F8E
+
+ieaLoSaqikjLtUcCkXaRqiTnNSt4Wf03r5OeA55/ioquzQTg83cJP65PHELRiv7v
+PbQdCBBTQXmKbUZNbD8rF8HfT5jVBTvOcfJqzh9DsbqJndf4YHXPnHdCoJ2H7jqb
+FPoKJe9G9dSc5ddYUuQi2Jfk/iRhkgTxwiTMJfy3B0yScDOZL8D3slBZUrT2tOdw
+qLrKMtHqqCo1BrHy75xOwFH+bvFW9AxW9uuH+RvTm+wfHxvHsmghklO9HQvzJh5+
+eQ6fW51sZ9zBeB75kbfDhOPH/EDOV9ANKqe4jbwBWjl/Ps2ABkSUuOrfXklNhJuS
+gBfalVDhiZVIIuQTWhqbg7dOnxOR813EdvvKsovBZr78U2DroeBPS9cG4lOQEOvI
+RDkA7eJt3/yNeuZHlQjL8wRAW8NEsU2UnzjUU+HaNmneT0rs8b1Roe9S39BHV8fF
+4HwE2vhtGv6kxY/UQG7tpv6SKyT3Mso1UJ82YwF8wHsrVn2L+fGccj2AFpG0NGF5
+ewkCb2ijVV1qoC1GbZWZgFil/5aCqFUnvGD6aCuFfxxr6Vk4iQwNqffMBbaEqStB
+eTX0up5LKU9UhhmKkAitK3FbfqezLkvlErM18zknyWr/SDKcZm81Ay30xmJWqE14
+pqCqXM8yPupzCiSfZz62Zit0M1pV5SHdm7zUlSv5f4jI4LNku26KjcHvNzMHHxaw
+wN0blm7x5GYbJY7V8MY4OmZxbWCYJnNz5QV0XVD8HoNS/KuRrm5avFEOq/OH1WwJ
+jZzq29Bp25/acfyubEDKz0sd2u5wiC5biesnHJObdblEVuUtgM3J5n8+KwgXn5GM
+Pjf79VBxtVQ61Zv79Q4liz8F5UMJzb3hck2bK0/rIxwUDSNX6Y27X9Yxgsq8ZHRF
+WFc33vHQ8Em5CglIXgRBr03wvzaGMCa+mVkwKpwFBm1QTaNSIoDXZz6H/6Xt5RWg
++IVjF7h8ysTN9xbENwmDZOWYRN9JGf455qpmAR/G7JeQuiiP06y4aIxN9reG3w40
+rusqo0TIp5Gr125IaTlgAR5GyuX8DiRQ5sqsDAGAJZ0x+SvxFeQSgQo/BwkgXb9d
+YKeh2HeOSioBwlBTDSb7ev/xT0autGhmbnviEh0Np3rkQf6qAe720WniLCuNamR9
+5X9B6FPhb85yCvPtqAcQOHagVuRbl19lFjlAdO7qA+W0ioaSrSLAWRhOa/iqhi+S
+mNqZQFnuCXYBOquKZumW5GWuGhuFcaRsqQuHRWaJDuuAhH8xaMISD2hQ5/oJqqaG
+/PFB+Ez+zsSffpY+HzHDo8QHNfpizI3sTKXiMRkaN7cCr09nI+A9YKvycIdGLqC+
+cympPmboygv5rWsROyWfPdophZ2pBJ0oZggnzNTNm6Njztt1Wyoid0dN4Y74dO1F
+krNHmtHpTlhXrO0jZUVpdwkUPVI9EhZxrKwDI9HQIqqZkeM3XhFlz6ob8Gtpr9zw
+6ERdBBpxkn1a90kzj3YInS6G2uUOJ2X/rjO8vRSkLXyskpUKFzK2GhbKduFWEc3R
+Rs2yj0p2ifYjwSiZFYN1Hrd5o039DrNQQ3zxBtlWWTOY1lXXJJO/djxUfTBJFlEC
+-----END RSA PRIVATE KEY-----
+)";
+
+const char M60PublicKey[] = R"(
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2jKyYjx2yU97eXkYbRiA
+6XtiCTIfZDLBgI8RHa3j33RiNKnEuYqjZtRn0UG9ZjBKcKFPKgxDh06Q8wGxEJXJ
+HpmQiPGdb+cG/+2VWr5+FF/tofRfh8jPzREBqcc59H05e6ZcMbVfRoDOObA+xE9R
+IbM6Io9uJg6M8/5sOpD01N7HlGPeMtcuTucoEsgdVWJCqBA4u1q941TAg131rzXO
+LM2+LSNO5yhNc+hRsACSlIcBbIgRC6DoDXO/AoM5nyQMDFPDdaT8Cs0omHzINzYj
+G0gXMwkMuIW1Tz0ZNobAifB9ReNNLn4+wxCXTSjS15hYs4rJrJqL+8kcHdtDkceP
+SwIDAQAB
+-----END PUBLIC KEY-----
+)";
+
 const M32FirmwareUtilDeviceInfoType M32FirmwareUtilDeviceInfos[] = 
 {
   {
@@ -390,6 +435,15 @@ const M32FirmwareUtilDeviceInfoType M32FirmwareUtilDeviceInfos[] =
     "6b29f1d663a21b35fb45b69a42649f5e",
     M32PrivateKey,
     M32PublicKey,
+    "wrpd"
+  },
+  {
+    "M60",
+    "D-Link AX6000 Wi-Fi 6 Smart Mesh Router",
+    "DLK6E8202001",
+    "c5f8a1e22f808abc84f2e4a6fa5f10bb",
+    M60PrivateKey,
+    M60PublicKey,
     "wrpd"
   }
 };
