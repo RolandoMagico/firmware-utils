@@ -122,10 +122,16 @@ A header of the decrypted firmware image parition has the following layout:
 #define M32_FIRMWARE_UTIL_FW_DATA_LENGTH_OFFSET     (0x2C)
 
 /*
-* Offset of the entry "checksum" in the header of a firmware image 
+* Offset of the entry "data checksum" in the header of a firmware image 
 * which can be used in the recovery web interface.
 */
-#define CHECKUM_PATCHER_CHECKSUM_OFFSET             (M32_FIRMWARE_UTIL_FW_HEADER_LENGTH - 2u)
+#define CHECKUM_PATCHER_DATA_CHECKSUM_OFFSET        (0x0E)
+
+/*
+* Offset of the entry "header checksum" in the header of a firmware image 
+* which can be used in the recovery web interface.
+*/
+#define CHECKUM_PATCHER_HEADER_CHECKSUM_OFFSET      (M32_FIRMWARE_UTIL_FW_HEADER_LENGTH - 2u)
 
 /*
 * The length of headers in the OEM images.
@@ -243,6 +249,10 @@ static int WriteAes128CbcIvToBuffer(uint8_t* buffer, const uint8_t* iv, const si
 static void PrintUsage(char* programName);
 static void PrintOpenSSLError(const char* api);
 
+/*****************************************************************************************
+ Checksum calculation
+*****************************************************************************************/
+static void Caclulate16BitSum(const char* name, uint32_t partitionIndex, uint8_t* buffer, size_t bufferLength, uint8_t* checksumBuffer, bool inverted);
 /***************************************************************************************************
  Constants
 ***************************************************************************************************/
@@ -658,30 +668,20 @@ static int UpdateHeaderInRecoveryImage(FILE* file, struct stat* fileStatus, cons
         partitionData[M32_FIRMWARE_UTIL_FW_DATA_LENGTH_OFFSET + 3] = (partitionLength >> 24) & 0xFFu;
       }
 
-      uint16_t checksumOld = partitionData[CHECKUM_PATCHER_CHECKSUM_OFFSET] | 
-                            (partitionData[CHECKUM_PATCHER_CHECKSUM_OFFSET + 1] << 8);
-      uint16_t checksumNew = 0;
-                                  
-      for (int i = 0; i < CHECKUM_PATCHER_CHECKSUM_OFFSET; i+= 2)
-      {
-        unsigned short currentValue = partitionData[i] | (partitionData[i + 1] << 8);
-        checksumNew += currentValue;
-        
-        /* Detect overflow */
-        if (checksumNew < currentValue)
-        {
-          checksumNew++;
-        }
-      }
-    
-      checksumNew = 0xFFFFu - checksumNew;
-
-      if (checksumNew != checksumOld)
-      {
-        printf("Updating checksum in partition %i from 0x%04X to 0x%04X\n", partition, checksumOld, checksumNew);
-        partitionData[CHECKUM_PATCHER_CHECKSUM_OFFSET] = checksumNew & 0xFFu;
-        partitionData[CHECKUM_PATCHER_CHECKSUM_OFFSET + 1] = (checksumNew >> 8) & 0xFFu; 
-      }
+      Caclulate16BitSum(
+        "data",
+        partition,
+        &(partitionData[M32_FIRMWARE_UTIL_FW_HEADER_LENGTH]),
+        partitionLength,
+        &(partitionData[CHECKUM_PATCHER_DATA_CHECKSUM_OFFSET]),
+        false);
+      Caclulate16BitSum(
+        "header",
+        partition,
+        partitionData,
+        CHECKUM_PATCHER_HEADER_CHECKSUM_OFFSET,
+        &(partitionData[CHECKUM_PATCHER_HEADER_CHECKSUM_OFFSET]), 
+        true);
     }
     
     if (partitionCount == 0)
@@ -1471,4 +1471,41 @@ static void PrintOpenSSLError(const char* api)
 {
   printf("%s failed\n", api);
   ERR_print_errors_fp(stdout);
+}
+
+static void Caclulate16BitSum(const char* name, uint32_t partitionIndex, uint8_t* buffer, size_t bufferLength, uint8_t* checksumBuffer, bool inverted)
+{
+  uint16_t checksumOld;
+  uint16_t checksumNew;
+
+  checksumOld = checksumBuffer[0] | (checksumBuffer[1] << 8);
+  checksumNew = 0;
+                              
+  for (int i = 0; i < bufferLength; i+= 2)
+  {
+    unsigned short currentValue = buffer[i] | (buffer[i + 1] << 8);
+    checksumNew += currentValue;
+    
+    /* Detect overflow */
+    if (checksumNew < currentValue)
+    {
+      checksumNew++;
+    }
+  }
+
+  if (inverted == true)
+  {
+    checksumNew = 0xFFFFu - checksumNew;
+  }
+
+  if (checksumNew != checksumOld)
+  {
+    printf("Updating %s checksum in partition %i from 0x%04X to 0x%04X\n", name, partitionIndex, checksumOld, checksumNew);
+    checksumBuffer[0] = checksumNew & 0xFFu;
+    checksumBuffer[1] = (checksumNew >> 8) & 0xFFu; 
+  }
+  else
+  {
+    printf("Keeping %s checksum in partition %i: 0x%04X\n", name, partitionIndex, checksumOld);
+  }
 }
